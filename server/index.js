@@ -11,9 +11,21 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "htpps:localhost:5173",
-    mmethods: [`GET`, `POST`],
+    origin: "http://localhost:5173",
+    methods: [`GET`, `POST`],
   },
+});
+
+io.on("connection", (socket) => {
+  console.log(socket.id);
+
+  socket.on("room", (data) => {
+    socket.join(data);
+  });
+
+  socket.on("message", (data) => {
+    socket.to(data.room).emit("messageReturn", data);
+  });
 });
 
 const PORT = 5000;
